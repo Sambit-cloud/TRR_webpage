@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet the Team - TRR Electric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logos-wrapper">
+            <a href="/" class="logo-container">
+                <img src="{{ url_for('static', filename='logos/SAE_logo.webp') }}" alt="SAE Logo" class="partner-logo sae-logo">
+                <img src="{{ url_for('static', filename='logos/NIT_Rourkela_Colour_Logo.svg') }}" alt="NIT Rourkela Logo" class="partner-logo">
+                <img src="{{ url_for('static', filename='logos/logo.png') }}" alt="Team Logo" class="team-logo">
+                <div class="logo-text"><span class="prefix-red">TEAM</span> ROAD RUNNER <span class="suffix-cyan">ELECTRIC</span></div>
+            </a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/team">Our Team</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle">Resources &#9662;</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/gallery">Gallery</a></li>
+                    <li><a href="/brochure">Brochure</a></li>
+                    <li><a href="/research">Research</a></li>
+                </ul>
+            </li>
+            <li><a href="/contact" class="btn-join-nav">Contact Us</a></li>
+        </ul>
+    </nav>
+    <script>
+        const btn = document.getElementById('hamburger');
+        const nav = document.getElementById('nav-links');
+        btn.addEventListener('click', () => { btn.classList.toggle('open'); nav.classList.toggle('open'); });
+        nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { btn.classList.remove('open'); nav.classList.remove('open'); }));
+    </script>
+
+    <section class="section-dark" style="min-height: 100vh; padding-top: 120px;">
+        <h2>MEET THE <span class="highlight">CREW</span></h2>
+        
+        <div class="team-grid">
+            
+            <div class="team-card">
+                <div class="member-img-box"><img src="{{ url_for('static', filename='person3.jpg') }}" alt="Member"></div>
+                <div class="member-info"><h3>RAHUL M.</h3><p class="role">Technical Head</p></div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-box" style="background: #222;"></div>
+                <div class="member-info"><h3>PRIYA S.</h3><p class="role">Electrical Lead</p></div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-box" style="background: #222;"></div>
+                <div class="member-info"><h3>AMIT B.</h3><p class="role">Chassis Lead</p></div>
+            </div>
+
+            </div>
+    </section>
+
+</body>
+</html>
