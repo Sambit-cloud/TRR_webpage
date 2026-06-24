@@ -7,77 +7,45 @@ from datetime import datetime
 
 import gspread
 from google.oauth2.service_account import Credentials
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 ASSETS_DIR = os.path.join(BASE_DIR, 'Assets')
 
-# ==========================
-# CONFIGURATION
-# ==========================
-GMAIL_ADDRESS = "sambitprakash5789@gmail.com"
-GMAIL_APP_PASSWORD = "your_app_password"
-
-GOOGLE_SHEET_ID = "YOUR_GOOGLE_SHEET_ID"
-
-# Paste contents of service-account.json here
-GOOGLE_SERVICE_ACCOUNT = {
-    "type": "service_account",
-    "project_id": "xxxxx",
-    "private_key_id": "xxxxx",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nYOUR_KEY\n-----END PRIVATE KEY-----\n",
-    "client_email": "xxxx@xxxx.iam.gserviceaccount.com",
-    "client_id": "xxxxxxxx",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/xxxx"
-}
+GMAIL_ADDRESS = os.getenv('GMAIL_ADDRESS')
+GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD')
+SHEET_ID = os.getenv('GOOGLE_SHEET_ID')
+CREDENTIALS_JSON = os.getenv('GOOGLE_SERVICE_ACCOUNT_JSON')
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
 
-# ==========================
-# GOOGLE SHEETS
-# ==========================
 def get_sheet():
-    creds = Credentials.from_service_account_info(
-        GOOGLE_SERVICE_ACCOUNT,
-        scopes=SCOPES
-    )
+    creds_dict = json.loads(CREDENTIALS_JSON)
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     client = gspread.authorize(creds)
-    return client.open_by_key(GOOGLE_SHEET_ID).sheet1
+    sheet = client.open_by_key(SHEET_ID).sheet1
+    return sheet
 
 
 def ensure_sheet_headers(sheet):
-    headers = [
-        'Timestamp',
-        'Type',
-        'Name',
-        'Email',
-        'Roll/Company ID',
-        'Branch/Industry',
-        'Area of Interest',
-        'Message'
-    ]
-
+    headers = ['Timestamp', 'Type', 'Name', 'Email', 'Roll/Company ID', 'Branch/Industry', 'Area of Interest', 'Message']
     if sheet.row_values(1) != headers:
         sheet.insert_row(headers, 1)
 
 
-# ==========================
-# EMAIL
-# ==========================
 def send_email(name, email, app_type, field, dept, reason):
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('alternative')
     msg['Subject'] = f"[TRR Website] New {app_type} Contact: {name}"
     msg['From'] = GMAIL_ADDRESS
     msg['To'] = GMAIL_ADDRESS
-    msg['Reply-To'] = email
 
     body = f"""
 New contact form submission on the TRR Electric website.
@@ -91,20 +59,19 @@ Interest  : {dept}
 Message:
 {reason}
 
+---
 Reply directly to: {email}
 """
-
     msg.attach(MIMEText(body, 'plain'))
+    msg['Reply-To'] = email
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.ehlo()
         server.starttls()
         server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
         server.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
 
 
-# ==========================
-# ROUTES
-# ==========================
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
@@ -137,11 +104,8 @@ def research_page():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact_page():
-
     if request.method == 'POST':
-
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
         app_type = request.form.get('applicant_type')
         name = request.form.get('name')
         email = request.form.get('email')
@@ -152,59 +116,38 @@ def contact_page():
 
         email_ok = False
         sheet_ok = False
+        sheet_error = None
+        email_error = None
 
-        # Save to Google Sheets
+        # Google Sheets
         try:
             sheet = get_sheet()
             ensure_sheet_headers(sheet)
-
-            sheet.append_row([
-                timestamp,
-                app_type,
-                name,
-                email,
-                user_id,
-                field,
-                dept,
-                reason
-            ])
-
+            sheet.append_row([timestamp, app_type, name, email, user_id, field, dept, reason])
             sheet_ok = True
-            print("Google Sheet updated")
-
+            print(f"Sheet OK: {name}")
         except Exception as e:
-            print("Google Sheet Error:", e)
+            sheet_error = str(e)
+            print(f"Sheet error: {e}")
 
-        # Send Email
+        # Email
         try:
             send_email(name, email, app_type, field, dept, reason)
             email_ok = True
-            print("Email sent")
-
+            print(f"Email OK: {name}")
         except Exception as e:
-            print("Email Error:", e)
+            email_error = str(e)
+            print(f"Email error: {e}")
 
+        # Success only if at least email went through
         if email_ok:
-            return render_template(
-                'join.html',
-                success=True,
-                sheet_warning=not sheet_ok
-            )
+            return render_template('join.html', success=True, sheet_warning=not sheet_ok)
 
-        return render_template(
-            'join.html',
-            failed=True
-        )
+        # Total failure
+        return render_template('join.html', failed=True, email_error=email_error, sheet_error=sheet_error)
 
     return render_template('join.html')
 
 
-# ==========================
-# MAIN
-# ==========================
 if __name__ == '__main__':
-    app.run(
-        host='127.0.0.1',
-        port=5000,
-        debug=True
-    )
+    app.run(debug=True, port=5000)
