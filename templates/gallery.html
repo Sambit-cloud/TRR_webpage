@@ -4,101 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery - TRR Electric</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logos-wrapper">
-            <a href="/" class="logo-container">
-                <img src="{{ url_for('static', filename='logos/SAE_logo.webp') }}" alt="SAE Logo" class="partner-logo sae-logo">
-                <img src="{{ url_for('static', filename='logos/NIT_Rourkela_Colour_Logo.svg') }}" alt="NIT Rourkela Logo" class="partner-logo">
-                <img src="{{ url_for('static', filename='logos/logo.png') }}" alt="Team Logo" class="team-logo">
-                <div class="logo-text"><span class="prefix-red">TEAM</span> ROAD RUNNER <span class="suffix-cyan">ELECTRIC</span></div>
-            </a>
-        </div>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/team">Our Team</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle">Resources &#9662;</a>
-                <ul class="dropdown-menu">
-                    <li><a href="/gallery">Gallery</a></li>
-                    <li><a href="/brochure">Brochure</a></li>
-                    <li><a href="/research">Research</a></li>
-                </ul>
-            </li>
-            <li><a href="/contact" class="btn-join-nav">Contact Us</a></li>
-        </ul>
-    </nav>
-    <script>
-        const btn = document.getElementById('hamburger');
-        const nav = document.getElementById('nav-links');
-        btn.addEventListener('click', () => { btn.classList.toggle('open'); nav.classList.toggle('open'); });
-        nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { btn.classList.remove('open'); nav.classList.remove('open'); }));
-    </script>
 
-    <section class="page-hero">
-        <h1>GALLERY</h1>
-        <p>Behind the scenes, on the track, and in the workshop.</p>
-    </section>
+<section class="page-hero">
+    <h1>GALLERY</h1>
+    <p>Behind the scenes, on the track, and in the workshop.</p>
+</section>
 
-    <!-- Filter tabs -->
-    <section class="gallery-section">
-        <div class="gallery-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="car">The Car</button>
-            <button class="filter-btn" data-filter="team">Team</button>
-            <button class="filter-btn" data-filter="events">Events</button>
-        </div>
+<section class="gallery-section">
 
-        <!-- Empty state — replace this div with gallery grid once photos are available -->
-       
-        <div class="gallery-grid">
-            <div class="gallery-item" data-category="team">
-                <img src="{{ url_for('static', filename='group.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-                    <div class="gallery-grid">
-            <div class="gallery-item" data-category="team">
-                <img src="{{ url_for('static', filename='trr.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-                    <div class="gallery-grid">
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb.jpeg') }}" alt="Event">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-                    <div class="gallery-grid">
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb2.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-                    <div class="gallery-grid">
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb3.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-                    <div class="gallery-grid">
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb4.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb5.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
-            </div>
-            <div class="gallery-item" data-category="events">
-                <img src="{{ url_for('static', filename='trrfb6.jpeg') }}" alt="Team">
-                <div class="gallery-overlay"><span>Chassis Build</span></div>
+    <div class="gallery-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="car">The Car</button>
+        <button class="filter-btn" data-filter="team">Team</button>
+        <button class="filter-btn" data-filter="events">Events</button>
+    </div>
+
+    <div class="gallery-grid">
+
+        <!-- Team -->
+        <div class="gallery-item" data-category="team">
+            <img src="{{ url_for('static', filename='group.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Team Photo</span>
             </div>
         </div>
 
-    </section>
+        <div class="gallery-item" data-category="team">
+            <img src="{{ url_for('static', filename='trr.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Workshop</span>
+            </div>
+        </div>
 
-    <footer><p>&copy; 2024 Team Road Runner Electric.</p></footer>
+        <!-- Events -->
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb2.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb3.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb4.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb5.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="events">
+            <img src="{{ url_for('static', filename='trrfb6.jpeg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>Event</span>
+            </div>
+        </div>
+
+        <!-- Car -->
+        <div class="gallery-item" data-category="car">
+            <img src="{{ url_for('static', filename='car1.jpg') }}" alt="">
+            <div class="gallery-overlay">
+                <span>The Car</span>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+
+const filterButtons = document.querySelectorAll(".filter-btn");
+const galleryItems = document.querySelectorAll(".gallery-item");
+
+filterButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        filterButtons.forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+        button.classList.add("active");
+
+        const filter = button.dataset.filter;
+
+        galleryItems.forEach(item => {
+
+            if (filter === "all" || item.dataset.category === filter) {
+                item.style.display = "block";
+            }
+            else {
+                item.style.display = "none";
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
 </body>
 </html>
